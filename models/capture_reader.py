@@ -1,3 +1,7 @@
+from scapy.contrib.rtcp import RTCP
+from scapy.layers.inet import IP, TCP, UDP
+from scapy.layers.l2 import ARP
+
 from models import capture_file_parser
 
 
@@ -7,7 +11,22 @@ def extract_network_information(capture_file):
     :param capture_file: capture file to analyze
     :return: network information : List[Dict[detail : information]]
     """
-    network = file_classification(capture_file)
+    packets = file_classification(capture_file)
+    network = []
+    for packet in packets:
+        details_dict = {'src_mac': packet.src, 'dst_mac': packet.dst}
+
+        protocols = ["UDP", "TCP", "RTCP", "ARP"]
+        for protocol in protocols:
+            if protocol in packet:
+                details_dict["protocol"] = packet[protocol]
+                break
+
+        if IP in packet:
+            details_dict['src_IP'] = packet['IP'].src
+            details_dict['dst_IP'] = packet['IP'].dst
+        network.append(details_dict)
+
     return network
 
 
@@ -28,5 +47,3 @@ def file_classification(capture_file):
         case 'erf':
             pass
     raise ValueError("Unsupported file extension: {}".format(extension))
-
-
