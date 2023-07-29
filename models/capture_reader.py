@@ -16,7 +16,7 @@ def extract_network_information(capture_file):
     for packet in packets:
         details_dict = {'src_mac': packet.src, 'dst_mac': packet.dst}
 
-        protocols = ["UDP", "TCP", "RTCP", "ARP"]
+        protocols = [UDP, TCP, RTCP, ARP]
         for protocol in protocols:
             if protocol in packet:
                 details_dict["protocol"] = packet[protocol]
