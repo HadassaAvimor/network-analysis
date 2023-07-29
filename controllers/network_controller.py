@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Form
 from starlette import status
 from models import network_analyze
 networks_router = APIRouter()
@@ -31,6 +31,11 @@ async def get_network_by_id(network_id):
 
 
 @networks_router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_network(pcap_file: UploadFile = File(...)):
-    network_analyze.capture_analyze(pcap_file)
-    return {"filename": pcap_file.filename}
+async def create_network(capture_file: UploadFile = File(...),
+                         client_id: str = Form(...),
+                         data_taken: str = Form(...),
+                         location_name: str = Form(...),):
+    a = network_analyze.capture_analyze(capture_file)
+    return {"packets": a, "client_id": client_id}
+
+
