@@ -1,0 +1,7 @@
+pydantic~=2.0.3
+mysql~=0.0.3
+python-dotenv~=1.0.0
+scapy~=2.5.0
+uvicorn~=0.23.1
+fastapi~=0.100.0
+starlette~=0.27.0
