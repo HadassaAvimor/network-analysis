@@ -43,7 +43,7 @@ CREATE TABLE Clients (
 
 create_technician_client_connection_table = """
 CREATE TABLE User_Client_Connection (
-    Id INT PRIMARY KEY,
+    Id INT AUTO_INCREMENT PRIMARY KEY,
     TechnicianId INT,
     FOREIGN KEY(TechnicianId) REFERENCES Technicians(Id),
     ClientId INT,
@@ -53,7 +53,7 @@ CREATE TABLE User_Client_Connection (
 
 create_network_table = """
 CREATE TABLE Network (
-    Id INT PRIMARY KEY,
+    Id INT AUTO_INCREMENT PRIMARY KEY,
     ClientId INT,
     FOREIGN KEY(ClientId) REFERENCES Clients(Id),
     Date DATE,
@@ -82,18 +82,24 @@ CREATE TABLE Devices_connections (
 
 create_Technician_permission_table = """
 CREATE TABLE Technician_permission (
-    Id INT PRIMARY KEY,
+    Id INT AUTO_INCREMENT PRIMARY KEY,
     TechnicianId INT,
     FOREIGN KEY(TechnicianId) REFERENCES Technicians(Id),
     ClientId INT,
     FOREIGN KEY(ClientId) REFERENCES Clients(Id)
 );
 """
+drop_table1 = """
+DROP TABLE User_Client_Connection
+"""
+
 
 # execute_query(connection, create_technicians_table)1
 # execute_query(connection, create_clients_table)1
-# execute_query(connection, create_technician_client_connection_table)1
+# execute_query(connection, create_technician_client_connection_table)
 # execute_query(connection, create_network_table)1
 # execute_query(connection, create_device_table)1
 # execute_query(connection, create_devices_connections_table)
 # execute_query(connection, create_Technician_permission_table)
+# execute_query(connection, drop_table1)
+
