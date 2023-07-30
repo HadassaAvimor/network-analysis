@@ -14,5 +14,5 @@ connection = pymysql.connect(
     cursorclass=pymysql.cursors.DictCursor,
 )
 
-if connection.open:
-    print("the connection is opened")
+
+

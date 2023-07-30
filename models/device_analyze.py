@@ -6,7 +6,7 @@ def find_devices_connections(traffic_list):
     """
     Finds connections between devices in a pcap file.
     :param traffic_list: list of Dict[traffic_detail, detail]
-    :return: Dict[mack_source, destination_source].
-
+    :return: Dict[mac_source, destination_source].
     """
-    pass
+    return traffic_list
+
