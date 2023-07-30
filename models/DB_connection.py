@@ -1,19 +1,20 @@
 import os
 
 import mysql.connector
+from dotenv import load_dotenv
 from mysql.connector import Error
 
 load_dotenv()
 
 
-def create_server_connection(host_name, user_name, user_password, database):
+def create_server_connection():
     connection = None
     try:
         connection = mysql.connector.connect(
-            host=host_name,
-    user=os.environ["DB_USERNAME"],
-    password=os.environ["DB_PASSWORD"],
-    db=os.environ["DB"],
+            host="sql6.freemysqlhosting.net",
+            user=os.environ["DB_USERNAME"],
+            password=os.environ["DB_PASSWORD"],
+            db=os.environ["DB"],
         )
         print("MySQL Database connection successful")
     except Error as err:
@@ -21,5 +22,4 @@ def create_server_connection(host_name, user_name, user_password, database):
     return connection
 
 
-db_connection = create_server_connection(HOST, USER, PASSWORD, DATABASE)
-
+db_connection = create_server_connection()
