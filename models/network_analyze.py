@@ -5,26 +5,33 @@ def capture_analyze(capture_file):
     """
     A function that performs analysis of a network from a cap file.
     :param capture_file: file to analyze.
-    :return: Dict[network_detail : detail]
+    :return: list[Dict[network_detail : detail]]
     """
-    packets = capture_reader.extract_network_information(capture_file)
-    return packets
+    return capture_reader.extract_network_information(capture_file)
 
 
-def normal_packets_to_analyze(packets_list):
+def create_network(capture_file, client_id, date_taken, location_name):
     """
-    A function that normalizes the packet data to fit the device_analyze.
-    :param packets_list: List[Packet]
-    :return: List[Dict[traffic_detail, detail]]
-    """
-    pass
-
-
-# הפרמטר מורכב מהפרטים של מה שחזר מהנרמול + מה שחזר מה read_capture - הסורס והדסטיניישן
-def create_network(network_information):
-    """
-    A function that creates a network from a dictionary of information about the network.
-    :param network_information: Dict[network_detail : detail]
-    :return: דיקט שמוכן להכנס לדאטה בייס
-    """
-    pass
+    A function that creates a network from capture file and all details.
+   :param capture_file: file to analyze.
+   :param client_id:
+   :param date_taken:
+   :param location_name: location of network
+   :return: מידע שמוכן להכנס לדאטה בייס
+   """
+    network_info = capture_analyze(capture_file)
+    network = {'client_id': client_id, 'location': location_name, 'date': date_taken}
+    # שליחה לדאטא בייס,network לקבל את
+    network_id = 'blabla'
+    devices_list = []
+    connections_list = []
+    for connection in network_info:
+        connection = {'src_mac': connection.get('src_mac'), 'des_mac': connection.get('des_mac')}
+        device = {'mac_address': connection.get('src_mac'), 'network_id': network_id}
+        if connection not in connections_list:
+            connections_list.append(connection)
+        if device not in devices_list:
+            devices_list.append(device)
+    # להכניס את connections and devices to the DB
+    # לסדר את מה שיחזור מהדיבי
+    return # להחזיר את נטוורק המסודר

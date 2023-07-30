@@ -35,7 +35,7 @@ async def create_network(capture_file: UploadFile = File(...),
                          client_id: str = Form(...),
                          date_taken: str = Form(...),
                          location_name: str = Form(...),):
-    a = network_analyze.capture_analyze(capture_file)
+    a = network_analyze.create_network(capture_file, client_id, date_taken, location_name)
     return {"packets": a, "client_id": client_id}
 
 
