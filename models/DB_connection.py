@@ -1,13 +1,26 @@
-import pymysql.cursors
+import mysql.connector
+from mysql.connector import Error
 
-connection = pymysql.connect(
-    host="sql6.freemysqlhosting.net",
-    user="sql6635129",
-    password="UD9PIExeur",
-    db="sql6635129",
-    charset="utf8",
-    cursorclass=pymysql.cursors.DictCursor,
-)
+HOST = "sql6.freemysqlhosting.net"
+USER = "sql6635129"
+PASSWORD = "UD9PIExeur"
+DATABASE = "sql6635129"
 
-if connection.open:
-    print("the connection is opened")
+
+def create_server_connection(host_name, user_name, user_password, database):
+    connection = None
+    try:
+        connection = mysql.connector.connect(
+            host=host_name,
+            user=user_name,
+            passwd=user_password,
+            database=database
+
+        )
+        print("MySQL Database connection successful")
+    except Error as err:
+        print(f"Error: '{err}'")
+    return connection
+
+
+db_connection = create_server_connection(HOST, USER, PASSWORD, DATABASE)
