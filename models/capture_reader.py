@@ -1,6 +1,7 @@
 from scapy.contrib.rtcp import RTCP
 from scapy.layers.inet import IP, TCP, UDP
 from scapy.layers.l2 import ARP
+from scapy.layers.ntp import NTP
 
 from models import capture_file_parser
 
@@ -16,7 +17,7 @@ def extract_network_information(capture_file):
     for packet in packets:
         details_dict = {'src_mac': packet.src, 'dst_mac': packet.dst}
 
-        protocols = [UDP, TCP, RTCP, ARP]
+        protocols = [UDP, TCP, RTCP, ARP, NTP]
         for protocol in protocols:
             if protocol in packet:
                 details_dict["protocol"] = packet[protocol]
