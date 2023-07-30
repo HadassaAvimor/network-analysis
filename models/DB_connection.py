@@ -1,18 +1,25 @@
 import os
 
-import pymysql.cursors
-from dotenv import load_dotenv
+import mysql.connector
+from mysql.connector import Error
 
 load_dotenv()
 
-connection = pymysql.connect(
-    host="sql6.freemysqlhosting.net",
+
+def create_server_connection(host_name, user_name, user_password, database):
+    connection = None
+    try:
+        connection = mysql.connector.connect(
+            host=host_name,
     user=os.environ["DB_USERNAME"],
     password=os.environ["DB_PASSWORD"],
     db=os.environ["DB"],
-    charset="utf8",
-    cursorclass=pymysql.cursors.DictCursor,
-)
+        )
+        print("MySQL Database connection successful")
+    except Error as err:
+        print(f"Error: '{err}'")
+    return connection
 
-if connection.open:
-    print("the connection is opened")
+
+db_connection = create_server_connection(HOST, USER, PASSWORD, DATABASE)
+
