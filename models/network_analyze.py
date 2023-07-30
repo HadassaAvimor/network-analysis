@@ -20,18 +20,18 @@ def create_network(capture_file, client_id, date_taken, location_name):
    :return: מידע שמוכן להכנס לדאטה בייס
    """
     network_info = capture_analyze(capture_file)
-    network = {'client_id': client_id, 'location': location_name, 'date': date_taken}
+    network_to_db = {'ClientId': client_id, 'Location': location_name, 'Date': date_taken}
     # שליחה לדאטא בייס,network לקבל את
     network_id = 'blabla'
-    devices_list = []
-    connections_list = []
+    devices_list_to_db = []
+    connections_list_to_db = []
     for connection in network_info:
         connection = {'src_mac': connection.get('src_mac'), 'des_mac': connection.get('des_mac')}
         device = {'mac_address': connection.get('src_mac'), 'network_id': network_id}
-        if connection not in connections_list:
-            connections_list.append(connection)
-        if device not in devices_list:
-            devices_list.append(device)
+        if connection not in connections_list_to_db:
+            connections_list_to_db.append(connection)
+        if device not in devices_list_to_db:
+            devices_list_to_db.append(device)
     # להכניס את connections and devices to the DB
     # לסדר את מה שיחזור מהדיבי
     return # להחזיר את נטוורק המסודר
