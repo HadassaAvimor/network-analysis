@@ -35,3 +35,6 @@ def create_network(capture_file, client_id, date_taken, location_name):
     # להכניס את connections and devices to the DB
     # לסדר את מה שיחזור מהדיבי
     return # להחזיר את נטוורק המסודר
+
+def insert_network_to_db(network, devices, connections):
+    pass
