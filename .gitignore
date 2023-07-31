@@ -1,5 +1,5 @@
 /.idea
 .env
 models/cretae_table.py
-models/__pycache__/
-controllers/__pycache__/
+models/__pycache__
+controllers/__pycache__
