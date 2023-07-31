@@ -29,7 +29,10 @@ cursor = db_connection.cursor()
 
 
 def connect_to_db(query, values_tuple):
-    cursor.execute(query, values_tuple)
+    if isinstance(values_tuple, list):
+        cursor.executemany(query, values_tuple)
+    else:
+        cursor.execute(query, values_tuple)
     db_connection.commit()
     db_connection.close()
     return cursor.lastrowid
@@ -64,7 +67,6 @@ def insert_many_to_db(table_name, values_list):
         ",".join(values_list[0].keys()),
         ",".join("%s" for _ in values_list[0].values())
     )
-    print(list([list(value.values()) for value in values_list]))
     return connect_to_db(query, list([list(value.values()) for value in values_list]))
 
 
@@ -95,5 +97,8 @@ def extract_network_by_id(network_id):
     # ) AS Device ON Network.Id = Device.NetworkId
     # WHERE Network.Id = {network_id};
 
+
 # insert_row('Network', {'ClientId': 1, 'Location': 'TLV', 'Date': time.time()})
 # print(extract_network_by_id(1))
+
+insert_many_to_db('Technicians', [{'Username': 'Noa', 'Password': '1212'}, {'Username': 'ASi', 'Password': '1212'}])
