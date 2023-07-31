@@ -1,5 +1,3 @@
-from fastapi.security import OAuth2PasswordRequestForm
-
 import models.authentication
 from models.technician import Technician
 from fastapi import status, APIRouter, Depends
@@ -18,13 +16,13 @@ technicians_router = APIRouter()
 
 
 @technicians_router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_technician(technician: Technician) -> Technician:
+async def create_technician(technician: Technician) -> dict[str, Technician | str]:
     return await models.authentication.create_technician(technician)
 
 
 @technicians_router.post('/login', )
-async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> dict:
-    return await login(form_data)
+async def login(technician: Technician) -> dict:
+    return await models.authentication.login(technician)
 
 
 @technicians_router.get('/me', summary='Get details of currently logged in user')
