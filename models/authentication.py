@@ -9,7 +9,7 @@ from starlette import status
 from jose import JWTError, jwt
 import requests
 
-from models.DB_connection import insert_row
+from models.DB_connection import insert_row_to_db
 from models.technician import TechnicianInDB, Technician
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
