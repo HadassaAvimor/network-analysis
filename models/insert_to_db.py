@@ -1,6 +1,3 @@
-import datetime
-import time
-
 from DB_connection import insert_row_to_db, insert_many_to_db
 
 

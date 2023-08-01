@@ -101,4 +101,3 @@ def extract_network_by_id(network_id):
 # insert_row('Network', {'ClientId': 1, 'Location': 'TLV', 'Date': time.time()})
 # print(extract_network_by_id(1))
 
-insert_many_to_db('Technicians', [{'Username': 'Noa', 'Password': '1212'}, {'Username': 'ASi', 'Password': '1212'}])
