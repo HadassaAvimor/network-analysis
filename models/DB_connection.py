@@ -29,9 +29,17 @@ cursor = db_connection.cursor()
 
 
 def connect_to_db(query, values_tuple):
+    print(query, type(values_tuple))
     cursor.execute(query, values_tuple)
+    print("2")
     db_connection.commit()
-    db_connection.close()
+    print("3")
+    return cursor.lastrowid
+def connect_to_db_retrieve(query, values_tuple):
+    print(query, type(values_tuple))
+    cursor.execute(query, values_tuple)
+    print("2")
+    print("3")
     return cursor.lastrowid
 
 
@@ -95,5 +103,28 @@ def extract_network_by_id(network_id):
     # ) AS Device ON Network.Id = Device.NetworkId
     # WHERE Network.Id = {network_id};
 
-# insert_row('Network', {'ClientId': 1, 'Location': 'TLV', 'Date': time.time()})
+
+def get_technician_by_name(username):
+    """
+    Gets a technician by name.
+
+    Args:
+      name: The name of the technician to get.
+
+    Returns:
+      A dictionary containing the technician's information, or None if the technician is not found.
+    """
+    query = "SELECT * FROM Technicians WHERE Username = (%s)"
+    print("befor")
+    return connect_to_db_retrieve(query, (username,))
+
+
+technician = get_technician_by_name("John Doe")
+print(technician)
+
+if technician is not None:
+    print(technician)
+else:
+    print("Technician not found")
+
 # print(extract_network_by_id(1))
