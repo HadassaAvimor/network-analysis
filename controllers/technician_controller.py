@@ -4,7 +4,7 @@ from fastapi import status, APIRouter, Depends
 # from models.authentication import get_current_technician
 from fastapi import Response
 from fastapi.security import OAuth2PasswordRequestForm
-from models.authentication2 import Token
+from models.authentication2 import Token, get_current_active_technician
 
 technicians_router = APIRouter()
 
@@ -29,6 +29,6 @@ async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depen
     return await models.authentication2.login_for_access_token(response, form_data)
 
 
-# @technicians_router.get('/me', summary='Get details of currently logged in user')
-# async def get_me(technician: Technician = Depends(get_current_technician)):
-    #return technician
+@technicians_router.get('/me', summary='Get details of currently logged in user')
+async def get_me(technician: Technician = Depends(get_current_active_technician)):
+    return technician

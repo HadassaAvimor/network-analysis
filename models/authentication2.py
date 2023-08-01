@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from typing import Union, Optional, Dict
 from jose import jwt, JWTError
@@ -10,8 +11,9 @@ from pydantic import BaseModel
 from passlib.context import CryptContext
 from models.technician import Technician, TechnicianInDB
 from starlette.status import HTTP_401_UNAUTHORIZED
-
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+from dotenv import load_dotenv
+load_dotenv()
+SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -58,7 +60,7 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    technician_email: Union[str, None] = None
+    technician_name: Union[str, None] = None
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -113,18 +115,18 @@ async def get_current_technician(token: str = Depends(oauth2_cookie_scheme)):
         technician_name: str = payload.get("sub")
         if technician_name is None:
             raise credentials_exception
-        token_data = TokenData(technician_email=technician_name)
+        token_data = TokenData(technician_name=technician_name)
     except JWTError:
         raise credentials_exception
-    technician = get_technician(fake_users_db, technician_name=token_data.technician_email)
+    technician = get_technician(fake_users_db, technician_name=token_data.technician_name)
     if technician is None:
         raise credentials_exception
     return technician
 
 
 async def get_current_active_technician(current_technician: Technician = Depends(get_current_technician)):
-    if current_technician:  # and current_technician.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
+    # if current_technician and current_technician.disabled:
+    # raise HTTPException(status_code=400, detail="Inactive user")
     return current_technician
 
 
@@ -147,3 +149,29 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+async def create_technician(technician: Technician) -> dict[str, Technician | str]:
+    """
+    Creates a new technician in the database.
+
+    Args:
+        technician: The technician to create.
+
+    Returns:
+        The created technician.
+    """
+
+    # Check if the technician already exists.
+    # user = Technician.query.filter_by(user_name=technician.user_name).first()
+    # if user is not None:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail="technician with this name already exist"
+    #     )
+
+    hashed_password = get_password_hash(technician.password)
+    access_token = create_access_token(technician.name)
+    # refresh_token = create_refresh_token(user['user_name'])
+
+    insert_technician("Technicians", {'Username': technician.name, 'Password': hashed_password})
+    store_token_in_cookies(access_token)
+    return {'technician': technician, 'token': access_token, }
