@@ -1,4 +1,4 @@
-from DB_connection import insert_row_to_db, insert_many_to_db
+from models.DB_connection import insert_row_to_db, insert_many_to_db
 
 
 def insert_to_network(network):
@@ -7,6 +7,7 @@ def insert_to_network(network):
     :param network: dict['ClientId': client_id, 'Location': location_name, 'Date': date_taken]
     :return: network's id
     """
+    print(network)
     return insert_row_to_db('Network', network)
 
 
@@ -21,14 +22,18 @@ def insert_to_clients(client):
 
 def insert_to_device(devices_list):
     """
-    A function that insert device to the db
+    A function that insert devices into db
     :param devices_list: list[dict['Vendor': vendor_name, 'MACAddress': mac_address, 'NetworkId': network_id, 'Type': type]
-    :return: device's id
+    :return: devices ids
     """
     insert_many_to_db('Device', devices_list)
 
 
-# insert_to_network({'ClientId': 1,  'Location': 'location_name' ,'Date': str(datetime.date.today())})
-# print(insert_to_clients({'Name': 'name'}))
-insert_to_device([{'Vendor': 'aaa', 'MACAddress': "mac_address", 'NetworkId': 1},
-                  {'Vendor': 'bbb', 'MACAddress': "mac_address", 'NetworkId': 1}])
+def insert_to_devices_connections(connections_list):
+    """
+    A function that insert connections into db
+    :param connections_list: list[dict['SourceId': source_mac, 'DestinationId': destination_mac, 'Protocol': protocol]
+    :return: connections ids
+    """
+    insert_many_to_db('Devices_connections', connections_list)
+
