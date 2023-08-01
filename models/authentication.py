@@ -9,7 +9,7 @@ from starlette import status
 from jose import JWTError, jwt
 import requests
 
-from models.DB_connection import insert_row
+from models.DB_connection import insert_row_to_db
 from models.technician import TechnicianInDB, Technician
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -110,7 +110,7 @@ async def create_technician(technician: Technician) -> dict[str, Technician | st
     access_token = create_access_token(technician.name)
     # refresh_token = create_refresh_token(user['user_name'])
 
-    insert_row("Technicians", {'Username': technician.name, 'Password': hashed_password})
+    insert_row_to_db("Technicians", {'Username': technician.name, 'Password': hashed_password})
     store_token_in_cookies(access_token)
     return {'technician': technician, 'token': access_token, }
 
