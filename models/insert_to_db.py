@@ -29,7 +29,7 @@ def insert_to_technician(technician):
     :return: client's id
     """
 
-    return insert_row_to_db('Technician', technician)
+    return insert_row_to_db('Technicians', technician)
 
 
 def insert_to_device(devices_list):
