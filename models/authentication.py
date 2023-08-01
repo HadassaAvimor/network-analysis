@@ -10,7 +10,7 @@ from jose import JWTError, jwt
 import requests
 
 from models.DB_connection import insert_row_to_db
-from models.technician import TechnicianInDB, Technician
+from models.technician import Technician
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
@@ -84,7 +84,7 @@ async def get_current_technician(token: str = Depends(reusable_oauth)):
             detail="Could not find technician",
         )
 
-    return TechnicianInDB(**user)
+    return Technician(**user)
 
 
 async def create_technician(technician: Technician) -> dict[str, Technician | str]:

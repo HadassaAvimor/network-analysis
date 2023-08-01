@@ -2,17 +2,19 @@ import os
 from datetime import datetime, timedelta
 from typing import Union, Optional, Dict
 from jose import jwt, JWTError
-from fastapi import Depends, FastAPI, HTTPException, status, Request, Response, encoders
+from fastapi import Depends, HTTPException, status, Request, Response, encoders
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, \
     OAuth2
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security.utils import get_authorization_scheme_param
 from pydantic import BaseModel
 from passlib.context import CryptContext
-from models.technician import Technician, TechnicianInDB
-from starlette.status import HTTP_401_UNAUTHORIZED
+
+from models.DB_connection import get_technician_by_name
+from models.technician import Technician
 from dotenv import load_dotenv
 from models.insert_to_db import insert_to_technician
+
 load_dotenv()
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
@@ -82,14 +84,16 @@ def get_technician(db, technician_name: str):
     if technician_name in db:
         technician_dict = db[technician_name]
         print(technician_dict)
-        return TechnicianInDB(**technician_dict)
+        return Technician(**technician_dict)
 
 
-def authenticate_technician(fake_db, technician_name: str, password: str):
-    technician: Technician = get_technician(fake_db, technician_name)
+def authenticate_technician(technician_name: str, password: str):
+    technician: Technician = Technician(**get_technician_by_name(technician_name))
+    print(technician)
     if not technician:
         return None
-    if not verify_password(password, technician.hashed_password):
+    print(technician)
+    if not verify_password(password, technician.password):
         return None
     return technician
 
@@ -113,13 +117,15 @@ async def get_current_technician(token: str = Depends(oauth2_cookie_scheme)):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(payload.get("sub"))
         technician_name: str = payload.get("sub")
         if technician_name is None:
             raise credentials_exception
         token_data = TokenData(technician_name=technician_name)
     except JWTError:
         raise credentials_exception
-    technician = get_technician(fake_users_db, technician_name=token_data.technician_name)
+    technician = get_technician_by_name(user_name=token_data.technician_name)
+    print(technician)
     if technician is None:
         raise credentials_exception
     return technician
@@ -132,7 +138,7 @@ async def get_current_active_technician(current_technician: Technician = Depends
 
 
 async def login_for_access_token(response: Response, form_data: OAuth2PasswordRequestForm = Depends()):
-    technician = authenticate_technician(fake_users_db, form_data.username, form_data.password)
+    technician = authenticate_technician(form_data.username, form_data.password)
     if not technician:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -150,31 +156,40 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-async def create_technician(response, technician: Technician) -> dict[str, Technician | str]:
+def is_authorized(technician: Technician = Depends(get_current_technician)):
     """
-    Creates a new technician in the database.
-
-    Args:
-        technician: The technician to create.
-
-    Returns:
-        The created technician.
+    This function checks if a user has permission to perform an action.
+    :param technician: depends on get_current_technician.
+    :return: technician if technician allowed, raise error if not allowed
     """
+    return True
 
-    # Check if the technician already exists.
-    user = Technician.query.filter_by(user_name=technician.name).first()
-    if user is not None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="technician with this name already exist"
-        )
-
-    hashed_password = get_password_hash(technician.password)
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(data={"sub": technician.name}, expires_delta=access_token_expires)
-    insert_to_technician({'Username': technician.name, 'Password': hashed_password})
-    response.set_cookie(
-        key="Authorization", value=f"Bearer {encoders.jsonable_encoder(access_token)}",
-        httponly=True
-    )
-    return {'technician': technician, 'token': access_token, }
+# async def create_technician(response, technician: Technician) -> dict[str, Technician | str]:
+#     """
+#     Creates a new technician in the database.
+#
+#     Args:
+#         technician: The technician to create.
+#
+#     Returns:
+#         The created technician.
+#     """
+#
+#     # Check if the technician already exists.
+#     user = get_technician_by_name(technician.name)
+#     print(user)
+#     if user:
+#         raise HTTPException(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             detail="technician with this name already exist"
+#         )
+#
+#     hashed_password = get_password_hash(technician.password)
+#     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+#     access_token = create_access_token(data={"sub": technician.name}, expires_delta=access_token_expires)
+#     insert_to_technician({'Username': technician.name, 'Password': hashed_password})
+#     response.set_cookie(
+#         key="Authorization", value=f"Bearer {encoders.jsonable_encoder(access_token)}",
+#         httponly=True
+#     )
+#     return {'technician': technician, 'token': access_token}

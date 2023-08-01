@@ -102,25 +102,21 @@ def extract_network_by_id(network_id):
     # WHERE Network.Id = {network_id};
 
 
-def get_technician_by_name(username):
+def get_technician_by_name(user_name):
     """
     Gets a technician by name.
 
     Args:
-      name: The name of the technician to get.
+      user_name: The name of the technician to get.
 
     Returns:
       A dictionary containing the technician's information, or None if the technician is not found.
     """
     query = "SELECT * FROM Technicians WHERE Username = (%s)"
-    return connect_to_db_retrieve(query, (username,))
+    technician = connect_to_db_retrieve(query, (user_name,))
+    return {'name': technician[0][1], 'password': technician[0][2]}
 
 
-technician = get_technician_by_name("John Doe")
 
-if technician is not None:
-    print(technician)
-else:
-    print("Technician not found")
 
-# print(extract_network_by_id(1))
+

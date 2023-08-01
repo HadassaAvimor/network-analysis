@@ -1,6 +1,8 @@
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, Form, Depends
 from starlette import status
 from models import network_analyze
+from models.authentication2 import get_current_technician
+
 networks_router = APIRouter()
 networks = [
     {
@@ -21,21 +23,21 @@ networks = [
 
 
 @networks_router.get("/", status_code=status.HTTP_200_OK)
-async def get_networks():
+async def get_networks(active_technician=Depends(get_current_technician)):
     return networks
 
 
 @networks_router.get("/id/{network_id}", status_code=status.HTTP_200_OK)
-async def get_network_by_id(network_id):
-    return [network for network in networks if network['id'] == int(network_id)][0]
+async def get_network_by_id(network_id, active_technician=Depends(get_current_technician)):
+    # [network for network in networks if network['id'] == int(network_id)][0]
+    pass
 
 
 @networks_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_network(capture_file: UploadFile = File(...),
                          client_id: str = Form(...),
                          date_taken: str = Form(...),
-                         location_name: str = Form(...),):
-    a = network_analyze.create_network(capture_file, client_id, date_taken, location_name)
-    return {"packets": a, "client_id": client_id}
-
-
+                         location_name: str = Form(...),
+                         active_technician=Depends(get_current_technician), ):
+    packets = network_analyze.create_network(capture_file, client_id, date_taken, location_name)
+    return {"packets": packets, "client_id": client_id}

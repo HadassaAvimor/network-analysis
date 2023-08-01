@@ -1,5 +1,4 @@
-from DB_connection import insert_row_to_db, insert_many_to_db
-
+from models.DB_connection import  insert_row_to_db, insert_many_to_db
 
 def insert_to_network(network):
     """
