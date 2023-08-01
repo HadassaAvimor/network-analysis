@@ -19,6 +19,16 @@ def insert_to_clients(client):
     return insert_row_to_db('Clients', client)
 
 
+def insert_to_technician(technician):
+    """
+    A function that insert technician to the db
+    :param technician: dict['Name': technician_id, 'Location': location_name, 'Date': date_taken]
+    :return: client's id
+    """
+
+    return insert_row_to_db('Technician', technician)
+
+
 def insert_to_device(devices_list):
     """
     A function that insert device to the db
@@ -26,9 +36,3 @@ def insert_to_device(devices_list):
     :return: device's id
     """
     insert_many_to_db('Device', devices_list)
-
-
-# insert_to_network({'ClientId': 1,  'Location': 'location_name' ,'Date': str(datetime.date.today())})
-# print(insert_to_clients({'Name': 'name'}))
-insert_to_device([{'Vendor': 'aaa', 'MACAddress': "mac_address", 'NetworkId': 1},
-                  {'Vendor': 'bbb', 'MACAddress': "mac_address", 'NetworkId': 1}])

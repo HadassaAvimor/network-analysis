@@ -12,6 +12,7 @@ from passlib.context import CryptContext
 from models.technician import Technician, TechnicianInDB
 from starlette.status import HTTP_401_UNAUTHORIZED
 from dotenv import load_dotenv
+from models.insert_to_db import insert_to_technician
 load_dotenv()
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
@@ -149,7 +150,7 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-async def create_technician(technician: Technician) -> dict[str, Technician | str]:
+async def create_technician(response, technician: Technician) -> dict[str, Technician | str]:
     """
     Creates a new technician in the database.
 
@@ -161,17 +162,19 @@ async def create_technician(technician: Technician) -> dict[str, Technician | st
     """
 
     # Check if the technician already exists.
-    # user = Technician.query.filter_by(user_name=technician.user_name).first()
-    # if user is not None:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_400_BAD_REQUEST,
-    #         detail="technician with this name already exist"
-    #     )
+    user = Technician.query.filter_by(user_name=technician.name).first()
+    if user is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="technician with this name already exist"
+        )
 
     hashed_password = get_password_hash(technician.password)
-    access_token = create_access_token(technician.name)
-    # refresh_token = create_refresh_token(user['user_name'])
-
-    insert_technician("Technicians", {'Username': technician.name, 'Password': hashed_password})
-    store_token_in_cookies(access_token)
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data={"sub": technician.name}, expires_delta=access_token_expires)
+    insert_to_technician({'Username': technician.name, 'Password': hashed_password})
+    response.set_cookie(
+        key="Authorization", value=f"Bearer {encoders.jsonable_encoder(access_token)}",
+        httponly=True
+    )
     return {'technician': technician, 'token': access_token, }

@@ -20,8 +20,8 @@ technicians_router = APIRouter()
 
 
 @technicians_router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_technician(technician: Technician) -> dict[str, Technician | str]:
-    return await models.authentication.create_technician(technician)
+async def create_technician(response: Response, technician: Technician) -> dict[str, Technician | str]:
+    return await models.authentication2.create_technician(response, technician)
 
 
 @technicians_router.post('/login', response_model=Token)
