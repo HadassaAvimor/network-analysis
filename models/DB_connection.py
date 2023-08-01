@@ -30,13 +30,18 @@ cursor = db_connection.cursor()
 
 
 def connect_to_db(query, values_tuple):
-    print(f"connect_to_db  {query}, {values_tuple}")
     if isinstance(values_tuple, list):
         cursor.executemany(query, values_tuple)
     else:
         cursor.execute(query, values_tuple)
     db_connection.commit()
     return cursor.lastrowid
+
+
+def connect_to_db_retrieve(query, values_tuple):
+    cursor.execute(query, values_tuple)
+    result = cursor.fetchall()
+    return result
 
 
 def insert_row_to_db(table_name, values):
@@ -99,7 +104,30 @@ def extract_network_by_id(network_id):
     # WHERE Network.Id = {network_id};
 
 
+def get_technician_by_name(username):
+    """
+    Gets a technician by name.
+
+    Args:
+      name: The name of the technician to get.
+
+    Returns:
+      A dictionary containing the technician's information, or None if the technician is not found.
+    """
+    query = "SELECT * FROM Technicians WHERE Username = (%s)"
+    return connect_to_db_retrieve(query, (username,))
+
+
+technician = get_technician_by_name("John Doe")
+
+if technician is not None:
+    print(technician)
+else:
+    print("Technician not found")
+
+=======
 # insert_row('Network', {'ClientId': 1, 'Location': 'TLV', 'Date': time.time()})
+
 # print(extract_network_by_id(1))
 
 # insert_many_to_db("Device", [{'Vendor': '111', 'MACAddress': "1", 'NetworkId': 1}, {'Vendor': '111', 'MACAddress': 'device', 'NetworkId': 1}])

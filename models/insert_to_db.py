@@ -20,6 +20,16 @@ def insert_to_clients(client):
     return insert_row_to_db('Clients', client)
 
 
+def insert_to_technician(technician):
+    """
+    A function that insert technician to the db
+    :param technician: dict['Name': technician_id, 'Location': location_name, 'Date': date_taken]
+    :return: client's id
+    """
+
+    return insert_row_to_db('Technicians', technician)
+
+
 def insert_to_device(devices_list):
     """
     A function that insert devices into db
