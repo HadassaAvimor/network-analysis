@@ -36,7 +36,6 @@ def connect_to_db(query, values_tuple):
     else:
         cursor.execute(query, values_tuple)
     db_connection.commit()
-    db_connection.close()
     return cursor.lastrowid
 
 

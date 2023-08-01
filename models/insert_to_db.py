@@ -22,13 +22,18 @@ def insert_to_clients(client):
 
 def insert_to_device(devices_list):
     """
-    A function that insert device to the db
+    A function that insert devices into db
     :param devices_list: list[dict['Vendor': vendor_name, 'MACAddress': mac_address, 'NetworkId': network_id, 'Type': type]
-    :return: device's id
+    :return: devices ids
     """
     insert_many_to_db('Device', devices_list)
 
 
-# insert_to_device(
-#     [{'Vendor': '111', 'MACAddress': "1", 'NetworkId': 1},
-#      {'Vendor': '111', 'MACAddress': 'device', 'NetworkId': 1}])
+def insert_to_devices_connections(connections_list):
+    """
+    A function that insert connections into db
+    :param connections_list: list[dict['SourceId': source_mac, 'DestinationId': destination_mac, 'Protocol': protocol]
+    :return: connections ids
+    """
+    insert_many_to_db('Devices_connections', connections_list)
+

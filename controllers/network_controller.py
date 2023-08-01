@@ -21,5 +21,5 @@ async def get_network_by_id(network_id):
 async def create_network(capture_file: UploadFile = File(...),
                          client_id: str = Form(...),
                          location_name: str = Form(...), ):
-    network = network_analyze.create_network(capture_file, client_id, location_name)
+    network = await network_analyze.create_network(capture_file, client_id, location_name)
     return {"network": network}
