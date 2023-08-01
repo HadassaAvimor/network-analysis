@@ -16,7 +16,8 @@ def create_server_connection():
             host="sql6.freemysqlhosting.net",
             user=os.environ["DB_USERNAME"],
             password=os.environ["DB_PASSWORD"],
-            db=os.environ["DB"]
+            db=os.environ["DB"],
+
         )
         print("MySQL Database connection successful")
     except Error as err:
@@ -29,8 +30,10 @@ cursor = db_connection.cursor()
 
 
 def connect_to_db(query, values_tuple):
-    print(query, type(values_tuple))
-    cursor.execute(query, values_tuple)
+    if isinstance(values_tuple, list):
+        cursor.executemany(query, values_tuple)
+    else:
+        cursor.execute(query, values_tuple)
     db_connection.commit()
     return cursor.lastrowid
 
@@ -64,13 +67,12 @@ def insert_many_to_db(table_name, values_list):
     :param values_list: A list of dicts of values to insert into the table.
     :return: list of new row's ids
     """
-
+    print(values_list)
     query = "INSERT INTO %s (%s) VALUES (%s)" % (
         table_name,
         ",".join(values_list[0].keys()),
         ",".join("%s" for _ in values_list[0].values())
     )
-    print(list([list(value.values()) for value in values_list]))
     return connect_to_db(query, list([list(value.values()) for value in values_list]))
 
 
@@ -123,4 +125,9 @@ if technician is not None:
 else:
     print("Technician not found")
 
+=======
+# insert_row('Network', {'ClientId': 1, 'Location': 'TLV', 'Date': time.time()})
+
 # print(extract_network_by_id(1))
+
+# insert_many_to_db("Device", [{'Vendor': '111', 'MACAddress': "1", 'NetworkId': 1}, {'Vendor': '111', 'MACAddress': 'device', 'NetworkId': 1}])
