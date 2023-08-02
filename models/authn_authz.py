@@ -64,24 +64,28 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 oauth2_cookie_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="token")
 
-@log
+
 @HandleException
+@log
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-@log
+
 @HandleException
+@log
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-@log
+
 @HandleException
+@log
 # TODO: ליצור קשר עם דיבי ולא לקבל כפרמטר
 def get_technician(technician_name: str):
     pass
 
-@log
+
 @HandleException
+@log
 def authenticate_technician(technician_name: str, password: str):
     technician: Technician = Technician(**get_technician_by_name(technician_name))
     if not technician:
@@ -90,8 +94,9 @@ def authenticate_technician(technician_name: str, password: str):
         return None
     return technician
 
-@log
+
 @HandleException
+@log
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -102,8 +107,9 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-@log
+
 @HandleException
+@log
 async def get_current_technician(token: str = Depends(oauth2_cookie_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -125,8 +131,9 @@ async def get_current_technician(token: str = Depends(oauth2_cookie_scheme)):
         raise credentials_exception
     return technician
 
-@log
+
 @HandleException
+@log
 async def login_for_access_token(response: Response, form_data: OAuth2PasswordRequestForm = Depends()):
     technician = authenticate_technician(form_data.username, form_data.password)
     if not technician:
@@ -145,8 +152,9 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@log
+
 @HandleException
+@log
 def authorize_technician(client_id, technician: Technician = Depends(get_current_technician)):
     """
     This function checks if a technician is authorized to service a client.

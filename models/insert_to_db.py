@@ -3,8 +3,8 @@ from DB_connection import connect_to_db
 from logger_handler import log
 
 
-@log
 @HandleException
+@log
 def insert_row_to_db(table_name, values):
     """
   Inserts a row into a table in the database.
@@ -21,8 +21,8 @@ def insert_row_to_db(table_name, values):
     return connect_to_db(query, tuple(values.values()))
 
 
-@log
 @HandleException
+@log
 def insert_many_to_db(table_name, values_list):
     """
     Inserts rows into a table in the database.
@@ -39,8 +39,8 @@ def insert_many_to_db(table_name, values_list):
     return connect_to_db(query, list([list(value.values()) for value in values_list]))
 
 
-@log
 @HandleException
+@log
 def insert_to_network(network):
     """
     A function that insert network to the db
@@ -50,8 +50,8 @@ def insert_to_network(network):
     return insert_row_to_db('Network', network)
 
 
-@log
 @HandleException
+@log
 def insert_to_clients(client):
     """
     A function that insert client to the db
@@ -61,20 +61,20 @@ def insert_to_clients(client):
     return insert_row_to_db('Clients', client)
 
 
-@log
 @HandleException
+@log
 def insert_to_technician(technician):
     """
     A function that insert technician to the db
-    :param technician: dict['Name': technician_id, 'Location': location_name, 'Date': date_taken]
+    :param technician: dict['Username': username, 'Password': password]
     :return: client's id
     """
 
     return insert_row_to_db('Technicians', technician)
 
 
-@log
 @HandleException
+@log
 def insert_to_device(devices_list):
     """
     A function that insert device to the db
@@ -84,8 +84,8 @@ def insert_to_device(devices_list):
     insert_many_to_db('Device', devices_list)
 
 
-@log
 @HandleException
+@log
 def insert_to_devices_connections(connections_list):
     """
      A function that insert connections to the db
@@ -93,3 +93,5 @@ def insert_to_devices_connections(connections_list):
     :return: connections id's
     """
     insert_many_to_db('Devices_connections', connections_list)
+
+

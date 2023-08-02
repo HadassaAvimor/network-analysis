@@ -3,8 +3,8 @@ from handle_exception import HandleException
 from logger_handler import log
 
 
-@log
 @HandleException
+@log
 def find_devices(traffic_list):
     """
      A function that finds connections between devices in a pcap file.
@@ -19,8 +19,8 @@ def find_devices(traffic_list):
     return devices_list
 
 
-@log
 @HandleException
+@log
 def find_devices_connections(traffic_list):
     """
      A function that finds connections between devices in a pcap file.
@@ -36,8 +36,8 @@ def find_devices_connections(traffic_list):
     return connections_list
 
 
-@log
 @HandleException
+@log
 async def get_vendor(mac_address):
     """
     A function that finds the vendor of device by mac address

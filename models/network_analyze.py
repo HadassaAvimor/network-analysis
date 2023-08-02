@@ -5,8 +5,8 @@ from handle_exception import HandleException
 from logger_handler import log
 
 
-@log
 @HandleException
+@log
 def capture_analyze(capture_file):
     """
     A function that performs analysis of a network from a cap file.
@@ -16,8 +16,8 @@ def capture_analyze(capture_file):
     return capture_reader.extract_network_information(capture_file)
 
 
-@log
 @HandleException
+@log
 def create_network(capture_file, client_id, date_taken, location_name):
     """
     A function that creates a network from capture file and all details.
@@ -37,8 +37,8 @@ def create_network(capture_file, client_id, date_taken, location_name):
     return network_id
 
 
-@log
 @HandleException
+@log
 async def add_devices_to_db(devices_list, network_id):
     devices = []
     for device in devices_list:
@@ -47,8 +47,8 @@ async def add_devices_to_db(devices_list, network_id):
     insert_to_device(devices)
 
 
-@log
 @HandleException
+@log
 async def add_connections_to_db(connections_list):
     connections = []
     for connection in connections_list:
