@@ -4,10 +4,12 @@ from handle_exception import HandleException
 import mysql.connector
 from dotenv import load_dotenv
 from mysql.connector import Error
+from logger_handler import log
 
 load_dotenv()
 
 
+@log
 @HandleException
 def create_server_connection():
     connection = None
@@ -28,6 +30,7 @@ db_connection = create_server_connection()
 cursor = db_connection.cursor()
 
 
+@log
 @HandleException
 def connect_to_db(query, values_tuple):
     if isinstance(values_tuple, list):
@@ -36,5 +39,3 @@ def connect_to_db(query, values_tuple):
         cursor.execute(query, values_tuple)
     db_connection.commit()
     return cursor.lastrowid
-
-

@@ -1,7 +1,9 @@
 from handle_exception import HandleException
 from DB_connection import connect_to_db
+from logger_handler import log
 
 
+@log
 @HandleException
 def insert_row_to_db(table_name, values):
     """
@@ -19,6 +21,7 @@ def insert_row_to_db(table_name, values):
     return connect_to_db(query, tuple(values.values()))
 
 
+@log
 @HandleException
 def insert_many_to_db(table_name, values_list):
     """
@@ -36,6 +39,7 @@ def insert_many_to_db(table_name, values_list):
     return connect_to_db(query, list([list(value.values()) for value in values_list]))
 
 
+@log
 @HandleException
 def insert_to_network(network):
     """
@@ -46,6 +50,7 @@ def insert_to_network(network):
     return insert_row_to_db('Network', network)
 
 
+@log
 @HandleException
 def insert_to_clients(client):
     """
@@ -56,6 +61,7 @@ def insert_to_clients(client):
     return insert_row_to_db('Clients', client)
 
 
+@log
 @HandleException
 def insert_to_technician(technician):
     """
@@ -67,6 +73,7 @@ def insert_to_technician(technician):
     return insert_row_to_db('Technicians', technician)
 
 
+@log
 @HandleException
 def insert_to_device(devices_list):
     """
@@ -75,3 +82,14 @@ def insert_to_device(devices_list):
     :return: device's id
     """
     insert_many_to_db('Device', devices_list)
+
+
+@log
+@HandleException
+def insert_to_devices_connections(connections_list):
+    """
+     A function that insert connections to the db
+    :param connections_list: list[dict['SourceId': src_mac, 'DestinationId': dst_mac, 'Protocol': protocol]
+    :return: connections id's
+    """
+    insert_many_to_db('Devices_connections', connections_list)

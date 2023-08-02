@@ -9,9 +9,10 @@ from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security.utils import get_authorization_scheme_param
 from pydantic import BaseModel
 from passlib.context import CryptContext
-from models.DB_connection import get_technician_by_name
 from models.technician import Technician
 from dotenv import load_dotenv
+from handle_exception import HandleException
+from logger_handler import log
 
 load_dotenv()
 SECRET_KEY = os.environ["SECRET_KEY"]
@@ -32,6 +33,8 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
         flows = OAuthFlowsModel(password={"tokenUrl": tokenUrl, "scopes": scopes})
         super().__init__(flows=flows, scheme_name=scheme_name, auto_error=auto_error)
 
+    @log
+    @HandleException
     async def __call__(self, request: Request) -> Optional[str]:
         authorization: str = request.cookies.get("Authorization")  # changed to accept access token from httpOnly Cookie
 
@@ -61,20 +64,24 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 oauth2_cookie_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="token")
 
-
+@log
+@HandleException
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-
+@log
+@HandleException
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-
+@log
+@HandleException
 # TODO: ליצור קשר עם דיבי ולא לקבל כפרמטר
 def get_technician(technician_name: str):
     pass
 
-
+@log
+@HandleException
 def authenticate_technician(technician_name: str, password: str):
     technician: Technician = Technician(**get_technician_by_name(technician_name))
     if not technician:
@@ -83,7 +90,8 @@ def authenticate_technician(technician_name: str, password: str):
         return None
     return technician
 
-
+@log
+@HandleException
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -94,7 +102,8 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-
+@log
+@HandleException
 async def get_current_technician(token: str = Depends(oauth2_cookie_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -116,7 +125,8 @@ async def get_current_technician(token: str = Depends(oauth2_cookie_scheme)):
         raise credentials_exception
     return technician
 
-
+@log
+@HandleException
 async def login_for_access_token(response: Response, form_data: OAuth2PasswordRequestForm = Depends()):
     technician = authenticate_technician(form_data.username, form_data.password)
     if not technician:
@@ -135,7 +145,8 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-
+@log
+@HandleException
 def authorize_technician(client_id, technician: Technician = Depends(get_current_technician)):
     """
     This function checks if a technician is authorized to service a client.
@@ -151,33 +162,3 @@ def authorize_technician(client_id, technician: Technician = Depends(get_current
     if client_id not in technician.clients_id_permission:
         raise credentials_exception
     return technician
-
-# async def create_technician(response, technician: Technician) -> dict[str, Technician | str]:
-#     """
-#     Creates a new technician in the database.
-#
-#     Args:
-#         technician: The technician to create.
-#
-#     Returns:
-#         The created technician.
-#     """
-#
-#     # Check if the technician already exists.
-#     user = get_technician_by_name(technician.name)
-#     print(user)
-#     if user:
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#             detail="technician with this name already exist"
-#         )
-#
-#     hashed_password = get_password_hash(technician.password)
-#     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-#     access_token = create_access_token(data={"sub": technician.name}, expires_delta=access_token_expires)
-#     insert_to_technician({'Username': technician.name, 'Password': hashed_password})
-#     response.set_cookie(
-#         key="Authorization", value=f"Bearer {encoders.jsonable_encoder(access_token)}",
-#         httponly=True
-#     )
-#     return {'technician': technician, 'token': access_token}
