@@ -1,13 +1,11 @@
 import time
-
 from scapy.contrib.rtcp import RTCP
 from scapy.layers.inet import IP, TCP, UDP
 from scapy.layers.l2 import ARP
 from scapy.layers.ntp import NTP
-
-from models import capture_file_parser
 from handle_exception import HandleException
 from logger_handler import log
+from capture_file_parser import get_capture_packets_from_erf, get_capture_packets_from_pcap
 
 
 @HandleException
@@ -48,7 +46,7 @@ def extract_network_information(capture_file):
     return network, time_taken
 
 
-@HandleException(exceptions=[ValueError])
+@HandleException
 @log
 def file_classification(capture_file):
     """
@@ -57,13 +55,16 @@ def file_classification(capture_file):
     :return: List[Packet]
     """
     extension = capture_file.filename.split(".")[-1]
+    cap_file = capture_file.file.read()
     match extension:
         case 'pcap':
-            return capture_file_parser.get_capture_packets_from_pcap(capture_file.file.read())
+            return get_capture_packets_from_pcap(cap_file)
         case 'pcapng':
-            return capture_file_parser.get_capture_packets_from_pcap(capture_file.file.read())
+            return get_capture_packets_from_pcap(cap_file)
         case 'cap':
-            pass
+            return get_capture_packets_from_pcap(cap_file)
         case 'erf':
-            pass
+            get_capture_packets_from_erf(cap_file)
+
     raise ValueError("Unsupported file extension: {}".format(extension))
+
