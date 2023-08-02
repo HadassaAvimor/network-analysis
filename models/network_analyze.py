@@ -1,7 +1,12 @@
-from models.insert_to_db import insert_to_device, insert_to_network, insert_to_devices_connections
 from models import capture_reader, device_analyze
+from insert_to_db import insert_to_device, insert_to_network, insert_to_devices_connections
+from device_analyze import get_vendor
+from handle_exception import HandleException
+from logger_handler import log
 
 
+@HandleException
+@log
 def capture_analyze(capture_file):
     """
     A function that performs analysis of a network from a cap file.
@@ -11,11 +16,14 @@ def capture_analyze(capture_file):
     return capture_reader.extract_network_information(capture_file)
 
 
-async def create_network(capture_file, client_id, location_name):
+@HandleException
+@log
+def create_network(capture_file, client_id, date_taken, location_name):
     """
     A function that creates a network from capture file and all details.
    :param capture_file: file to analyze.
    :param client_id:
+   :param date_taken:
    :param location_name: location of network
    :return: id of created network
    """
@@ -29,14 +37,18 @@ async def create_network(capture_file, client_id, location_name):
     return network_id
 
 
+@HandleException
+@log
 async def add_devices_to_db(devices_list, network_id):
     devices = []
     for device in devices_list:
-        vendor = await device_analyze.get_vendor(device)
+        vendor = await get_vendor(device)
         devices.append({'Vendor': vendor, 'MACAddress': device, 'NetworkId': network_id})
     insert_to_device(devices)
 
 
+@HandleException
+@log
 async def add_connections_to_db(connections_list):
     connections = []
     for connection in connections_list:
