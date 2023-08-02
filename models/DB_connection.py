@@ -29,6 +29,8 @@ def create_server_connection():
 db_connection = create_server_connection()
 cursor = db_connection.cursor()
 
+def get_cursor():
+    return cursor
 
 @HandleException
 @log
