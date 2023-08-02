@@ -29,6 +29,12 @@ db_connection = create_server_connection()
 cursor = db_connection.cursor()
 
 
+def get_cursor():
+    return cursor
+
+def get_connection():
+    return db_connection
+
 def connect_to_db(query, values_tuple):
     if isinstance(values_tuple, list):
         cursor.executemany(query, values_tuple)
@@ -36,12 +42,6 @@ def connect_to_db(query, values_tuple):
         cursor.execute(query, values_tuple)
     db_connection.commit()
     return cursor.lastrowid
-
-
-def connect_to_db_retrieve(query, values_tuple):
-    cursor.execute(query, values_tuple)
-    result = cursor.fetchall()
-    return result
 
 
 def insert_row_to_db(table_name, values):
@@ -67,7 +67,6 @@ def insert_many_to_db(table_name, values_list):
     :param values_list: A list of dicts of values to insert into the table.
     :return: list of new row's ids
     """
-    print(values_list)
     query = "INSERT INTO %s (%s) VALUES (%s)" % (
         table_name,
         ",".join(values_list[0].keys()),
@@ -103,29 +102,6 @@ def extract_network_by_id(network_id):
     # ) AS Device ON Network.Id = Device.NetworkId
     # WHERE Network.Id = {network_id};
 
-
-def get_technician_by_name(username):
-    """
-    Gets a technician by name.
-
-    Args:
-      name: The name of the technician to get.
-
-    Returns:
-      A dictionary containing the technician's information, or None if the technician is not found.
-    """
-    query = "SELECT * FROM Technicians WHERE Username = (%s)"
-    return connect_to_db_retrieve(query, (username,))
-
-
-technician = get_technician_by_name("John Doe")
-
-if technician is not None:
-    print(technician)
-else:
-    print("Technician not found")
-
-=======
 # insert_row('Network', {'ClientId': 1, 'Location': 'TLV', 'Date': time.time()})
 
 # print(extract_network_by_id(1))
