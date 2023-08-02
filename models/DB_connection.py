@@ -27,6 +27,8 @@ def create_server_connection():
 db_connection = create_server_connection()
 cursor = db_connection.cursor()
 
+def get_cursor():
+    return cursor
 
 def connect_to_db(query, values_tuple):
     if isinstance(values_tuple, list):
