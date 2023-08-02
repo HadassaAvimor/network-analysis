@@ -13,19 +13,11 @@ from passlib.context import CryptContext
 from models.DB_connection import get_technician_by_name
 from models.technician import Technician
 from dotenv import load_dotenv
-from models.insert_to_db import insert_to_technician
 
 load_dotenv()
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-fake_users_db = {
-    "johndoe": {
-        "name": "johndoe",
-        "hashed_password": "$2b$12$UEWlwXzDke9OUeHefcPm.eBTSgskCESsHXsNvx3c8RrvWftxQRoAe",
-    }
-}
 
 
 class OAuth2PasswordBearerWithCookie(OAuth2):
@@ -80,11 +72,8 @@ def get_password_hash(password):
 
 
 # TODO: ליצור קשר עם דיבי ולא לקבל כפרמטר
-def get_technician(db, technician_name: str):
-    if technician_name in db:
-        technician_dict = db[technician_name]
-        print(technician_dict)
-        return Technician(**technician_dict)
+def get_technician(technician_name: str):
+    pass
 
 
 def authenticate_technician(technician_name: str, password: str):
@@ -131,12 +120,6 @@ async def get_current_technician(token: str = Depends(oauth2_cookie_scheme)):
     return technician
 
 
-async def get_current_active_technician(current_technician: Technician = Depends(get_current_technician)):
-    # if current_technician and current_technician.disabled:
-    # raise HTTPException(status_code=400, detail="Inactive user")
-    return current_technician
-
-
 async def login_for_access_token(response: Response, form_data: OAuth2PasswordRequestForm = Depends()):
     technician = authenticate_technician(form_data.username, form_data.password)
     if not technician:
@@ -156,13 +139,21 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-def is_authorized(technician: Technician = Depends(get_current_technician)):
+def authorize_technician(client_id, technician: Technician = Depends(get_current_technician)):
     """
-    This function checks if a user has permission to perform an action.
+    This function checks if a technician is authorized to service a client.
+    :param client_id: The client ID.
     :param technician: depends on get_current_technician.
     :return: technician if technician allowed, raise error if not allowed
     """
-    return True
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="You are not authorized to perform this action",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    if client_id not in technician.clients_id_permission:
+        raise credentials_exception
+    return technician
 
 # async def create_technician(response, technician: Technician) -> dict[str, Technician | str]:
 #     """

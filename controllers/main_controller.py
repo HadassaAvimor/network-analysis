@@ -3,7 +3,7 @@ from fastapi import Request, Response
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 
-from models.authentication2 import get_current_technician
+from models.authn_authz import get_current_technician
 from technician_controller import technicians_router
 from network_controller import networks_router
 

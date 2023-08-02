@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class Technician(BaseModel):
     name: str
     password: str
-    clients_permission: Optional[list[dict]] = None
+    clients_id_permission: Optional[list] = None
     clients: Optional[list] = None
 
 

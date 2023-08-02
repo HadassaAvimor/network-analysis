@@ -1,10 +1,9 @@
-import models.authentication2
+import models.authn_authz
 from models.technician import Technician
 from fastapi import status, APIRouter, Depends
-# from models.authentication import get_current_technician
 from fastapi import Response
 from fastapi.security import OAuth2PasswordRequestForm
-from models.authentication2 import Token, get_current_active_technician
+from models.authn_authz import Token, get_current_technician
 
 technicians_router = APIRouter()
 
@@ -16,9 +15,9 @@ technicians_router = APIRouter()
 
 @technicians_router.post('/login', response_model=Token)
 async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends()) -> dict:
-    return await models.authentication2.login_for_access_token(response, form_data)
+    return await models.authn_authz.login_for_access_token(response, form_data)
 
 
 @technicians_router.get('/me', summary='Get details of currently logged in user')
-async def get_me(technician: Technician = Depends(get_current_active_technician)):
+async def get_me(technician: Technician = Depends(get_current_technician)):
     return technician

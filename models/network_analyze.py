@@ -21,7 +21,7 @@ def create_network(capture_file, client_id, date_taken, location_name):
    """
     network_info = capture_analyze(capture_file)
     network_to_db = {'ClientId': client_id, 'Location': location_name, 'Date': date_taken}
-    # שליחה לדאטא בייס,network לקבל את
+    # שליחה לדאטא בייס,network_id לקבל את
     network_id = 'blabla'
     devices_list_to_db = []
     connections_list_to_db = []
