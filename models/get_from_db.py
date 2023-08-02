@@ -107,5 +107,6 @@ def get_communication(network_id):
 @HandleException
 @log
 def get_technician(**kwargs):
-    data_from_db = get_one_by_condition('Technicians', **kwargs)
-    return normal_communication(data_from_db)
+    technician = normal_communication(get_one_by_condition('Technicians', **kwargs))
+    clients = normal_communication(get_many_by_condition('Technician_Permision', TechnicianId=technician.get('Id')))
+    return {**technician, **clients}
