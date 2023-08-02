@@ -1,4 +1,5 @@
 from DB_connection import get_cursor
+from normal_data_from_db import normal_communication, normal_network_details
 
 cursor = get_cursor()
 
@@ -35,27 +36,6 @@ def select_by_query(query):
     return cursor.fetchall()
 
 
-# def filter_data_by_columns(data_dict):
-#     result_data = {}
-#     for table_name, column_name, column_order, values in zip(data_dict['table_name'], data_dict['column_name'],
-#                                                              data_dict['columns_order'], data_dict['value']):
-#         order = ''
-#         for column in column_order:
-#             order += column
-#             order += ' ,'
-#         order = order[:-1]
-#         select_query = f"SELECT {order} FROM {table_name} WHERE {column_name} = %s"
-#         table_results = {}
-#         cursor.execute(select_query, (values,))
-#         rows = cursor.fetchall()
-#         print(column_order, rows)
-#         for name, value in zip(column_order, rows):
-#             table_results[name] = value
-#         result_data[table_name] = table_results
-#
-#     return result_data
-
-
 def get_network_by_network_id(network_id):
     query = f"""SELECT Network.Date, Network.Location, Clients.Name, Device.MACAddress, Device.Vendor,
                            Devices_connections.SourceId, Devices_connections.DestinationId
@@ -77,7 +57,8 @@ def get_all_devices(network_id):
                            FROM Network 
                            LEFT JOIN Device ON Network.Id = Device.NetworkId 
                            WHERE Network.Id = {network_id}'''
-    return select_by_query(query)
+    data_from_db = select_by_query(query)
+    return normal_network_details(data_from_db)
 
 
 def get_devices_by_client_id(client_id):
@@ -97,4 +78,5 @@ def get_communication(network_id):
             ' FROM Devices_connections ' \
             'LEFT JOIN Device ON SourceId = Device.MACAddress ' \
             f'WHERE Device.NetworkId = {network_id}'
-    return select_by_query(query)
+    data_from_db = select_by_query(query)
+    return normal_communication(data_from_db)
