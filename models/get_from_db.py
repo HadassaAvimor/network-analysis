@@ -102,3 +102,10 @@ def get_communication(network_id):
             f'WHERE Device.NetworkId = {network_id}'
     data_from_db = select_by_query(query)
     return normal_communication(data_from_db)
+
+
+@HandleException
+@log
+def get_technician(**kwargs):
+    data_from_db = get_one_by_condition('Technicians', **kwargs)
+    return normal_communication(data_from_db)
