@@ -1,3 +1,5 @@
+import time
+
 from scapy.contrib.rtcp import RTCP
 from scapy.layers.inet import IP, TCP, UDP
 from scapy.layers.l2 import ARP
@@ -6,15 +8,24 @@ from scapy.layers.ntp import NTP
 from models import capture_file_parser
 
 
+def extract_time_from_packet(packet):
+    timestamp = packet.time
+    local_time = time.localtime(int(timestamp))
+    return time.strftime("%Y-%m-%d", local_time)
+
+
 def extract_network_information(capture_file):
     """
     A function that receives a cap file and returns a dictionary that contains information of the packets.
     :param capture_file: capture file to analyze
-    :return: network information : List[Dict[detail : information]]
+    :return: network information : List[Dict[detail : information]], capture_time
     """
     packets = file_classification(capture_file)
     network = []
+    time_taken = extract_time_from_packet(packets[0])
+
     for packet in packets:
+
         details_dict = {'src_mac': packet.src, 'dst_mac': packet.dst}
 
         protocols = [UDP, TCP, RTCP, ARP, NTP]
@@ -28,7 +39,7 @@ def extract_network_information(capture_file):
             details_dict['dst_IP'] = packet['IP'].dst
         network.append(details_dict)
 
-    return network
+    return network, time_taken
 
 
 def file_classification(capture_file):

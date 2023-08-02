@@ -9,7 +9,6 @@ from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security.utils import get_authorization_scheme_param
 from pydantic import BaseModel
 from passlib.context import CryptContext
-
 from models.DB_connection import get_technician_by_name
 from models.technician import Technician
 from dotenv import load_dotenv
@@ -78,10 +77,8 @@ def get_technician(technician_name: str):
 
 def authenticate_technician(technician_name: str, password: str):
     technician: Technician = Technician(**get_technician_by_name(technician_name))
-    print(technician)
     if not technician:
         return None
-    print(technician)
     if not verify_password(password, technician.password):
         return None
     return technician

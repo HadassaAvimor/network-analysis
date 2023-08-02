@@ -1,4 +1,5 @@
-from models.DB_connection import  insert_row_to_db, insert_many_to_db
+from DB_connection import insert_row_to_db, insert_many_to_db
+
 
 def insert_to_network(network):
     """
@@ -35,3 +36,9 @@ def insert_to_device(devices_list):
     :return: device's id
     """
     insert_many_to_db('Device', devices_list)
+
+
+# insert_to_network({'ClientId': 1,  'Location': 'location_name' ,'Date': str(datetime.date.today())})
+# print(insert_to_clients({'Name': 'name'}))
+insert_to_device([{'Vendor': 'aaa', 'MACAddress': "mac_address", 'NetworkId': 1},
+                  {'Vendor': 'bbb', 'MACAddress': "mac_address", 'NetworkId': 1}])

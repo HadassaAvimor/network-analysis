@@ -17,25 +17,23 @@ def create_network(capture_file, client_id, date_taken, location_name):
    :param client_id:
    :param date_taken:
    :param location_name: location of network
-   :return: מידע שמוכן להכנס לדאטה בייס
+   :return: id of created network
    """
-    network_info = capture_analyze(capture_file)
-    network_to_db = {'ClientId': client_id, 'Location': location_name, 'Date': date_taken}
-    # שליחה לדאטא בייס,network_id לקבל את
-    network_id = 'blabla'
-    devices_list_to_db = []
-    connections_list_to_db = []
-    for connection in network_info:
-        connection = {'src_mac': connection.get('src_mac'), 'des_mac': connection.get('des_mac')}
-        device = {'mac_address': connection.get('src_mac'), 'network_id': network_id}
-        if connection not in connections_list_to_db:
-            connections_list_to_db.append(connection)
-        if device not in devices_list_to_db:
-            devices_list_to_db.append(device)
-    # להכניס את connections and devices to the DB
-    # לסדר את מה שיחזור מהדיבי
-    return  # להחזיר את נטוורק המסודר
+    network_info, capture_time = capture_analyze(capture_file)
+    network_id = insert_to_network(
+        {'ClientId': client_id, 'Location': location_name, 'Date': capture_time})
+    devices_list_to_db = device_analyze.find_devices(network_info)
+    connections_list_to_db = device_analyze.find_devices_connections(network_info)
+    await add_devices_to_db(devices_list_to_db, network_id)
+    await add_connections_to_db(connections_list_to_db)
+    return network_id
 
 
-def insert_network_to_db(network, devices, connections):
-    pass
+
+
+async def add_connections_to_db(connections_list):
+    connections = []
+    for connection in connections_list:
+        connections.append({'SourceId': connection.get('src_mac'), 'DestinationId': connection.get('dst_mac'),
+                            'Protocol': connection.get('protocol')})
+    insert_to_devices_connections(connections)

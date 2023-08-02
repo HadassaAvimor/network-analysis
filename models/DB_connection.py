@@ -29,8 +29,10 @@ cursor = db_connection.cursor()
 
 
 def connect_to_db(query, values_tuple):
-    print(query, type(values_tuple))
-    cursor.execute(query, values_tuple)
+    if isinstance(values_tuple, list):
+        cursor.executemany(query, values_tuple)
+    else:
+        cursor.execute(query, values_tuple)
     db_connection.commit()
     return cursor.lastrowid
 
@@ -70,7 +72,6 @@ def insert_many_to_db(table_name, values_list):
         ",".join(values_list[0].keys()),
         ",".join("%s" for _ in values_list[0].values())
     )
-    print(list([list(value.values()) for value in values_list]))
     return connect_to_db(query, list([list(value.values()) for value in values_list]))
 
 
@@ -117,6 +118,7 @@ def get_technician_by_name(user_name):
     return {'name': technician[0][1], 'password': technician[0][2]}
 
 
+technician = get_technician_by_name("John Doe")
 
 
 
