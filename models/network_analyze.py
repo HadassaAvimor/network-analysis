@@ -1,3 +1,4 @@
+from models.insert_to_db import insert_to_device, insert_to_network, insert_to_devices_connections
 from models import capture_reader, device_analyze
 from insert_to_db import insert_to_device, insert_to_clients
 from device_analyze import get_vendor,
@@ -29,6 +30,12 @@ def create_network(capture_file, client_id, date_taken, location_name):
     await add_connections_to_db(connections_list_to_db)
     return network_id
 
+async def add_devices_to_db(devices_list, network_id):
+    devices = []
+    for device in devices_list:
+        vendor = await device_analyze.get_vendor(device)
+        devices.append({'Vendor': vendor, 'MACAddress': device, 'NetworkId': network_id})
+    insert_to_device(devices)
 
 async def add_connections_to_db(connections_list):
     connections = []
