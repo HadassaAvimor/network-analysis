@@ -3,15 +3,10 @@ from pydantic import BaseModel
 
 
 class Technician(BaseModel):
-    # id: int
-    password: str
     name: str
-    permission: Optional[list] = None
+    password: str
+    clients_id_permission: Optional[list] = None
     clients: Optional[list] = None
-
-
-class TechnicianInDB(Technician):
-    hashed_password: str
 
 
 

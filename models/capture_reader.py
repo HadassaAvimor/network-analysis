@@ -6,14 +6,20 @@ from scapy.layers.l2 import ARP
 from scapy.layers.ntp import NTP
 
 from models import capture_file_parser
+from handle_exception import HandleException
+from logger_handler import log
 
 
+@HandleException
+@log
 def extract_time_from_packet(packet):
     timestamp = packet.time
     local_time = time.localtime(int(timestamp))
     return time.strftime("%Y-%m-%d", local_time)
 
 
+@HandleException
+@log
 def extract_network_information(capture_file):
     """
     A function that receives a cap file and returns a dictionary that contains information of the packets.
@@ -42,6 +48,8 @@ def extract_network_information(capture_file):
     return network, time_taken
 
 
+@HandleException(exceptions=[ValueError])
+@log
 def file_classification(capture_file):
     """
     A function that classifies the capture file according its type, and sends to the suitable processing for it.

@@ -93,7 +93,6 @@ drop_table1 = """
 DROP TABLE Devices_connections
 """
 
-
 # execute_query(connection, create_technicians_table)1
 # execute_query(connection, create_clients_table)1
 # execute_query(connection, create_technician_client_connection_table)
@@ -102,4 +101,3 @@ DROP TABLE Devices_connections
 # execute_query(connection, create_devices_connections_table)
 # execute_query(connection, create_Technician_permission_table)
 # execute_query(connection, drop_table1)
-

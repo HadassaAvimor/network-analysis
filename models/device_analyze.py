@@ -1,9 +1,13 @@
 import httpx
+from handle_exception import HandleException
+from logger_handler import log
 
 
+@HandleException
+@log
 def find_devices(traffic_list):
     """
-    Finds connections between devices in a pcap file.
+     A function that finds connections between devices in a pcap file.
     :param traffic_list: list of Dict[traffic_detail, detail]
     :return: List[Dict[src_mac, dst_mac]].
     """
@@ -15,9 +19,11 @@ def find_devices(traffic_list):
     return devices_list
 
 
+@HandleException
+@log
 def find_devices_connections(traffic_list):
     """
-    Finds connections between devices in a pcap file.
+     A function that finds connections between devices in a pcap file.
     :param traffic_list: List[Dict[traffic_detail, detail]]
     :return: Dict[mac_source, destination_source, protocol].
     """
@@ -30,7 +36,14 @@ def find_devices_connections(traffic_list):
     return connections_list
 
 
+@HandleException
+@log
 async def get_vendor(mac_address):
+    """
+    A function that finds the vendor of device by mac address
+    :param mac_address: device's mac address
+    :return: vendor of mac address
+    """
     url = f"https://api.macvendors.com/{mac_address}"
     async with httpx.AsyncClient() as client:
         try:
