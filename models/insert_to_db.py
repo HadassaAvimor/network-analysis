@@ -1,6 +1,42 @@
-from DB_connection import insert_row_to_db, insert_many_to_db
+from handle_exception import HandleException
+from DB_connection import connect_to_db
 
 
+@HandleException
+def insert_row_to_db(table_name, values):
+    """
+  Inserts a row into a table in the database.
+  Args: table_name: The name of the table to insert the row into.
+        values: A dict of values to insert into the table.
+  Returns: the new row's id
+  """
+    # Create the SQL query.
+    query = "INSERT INTO %s (%s) VALUES (%s)" % (
+        table_name,
+        ",".join(values.keys()),
+        ",".join("%s" for _ in values.values())
+    )
+    return connect_to_db(query, tuple(values.values()))
+
+
+@HandleException
+def insert_many_to_db(table_name, values_list):
+    """
+    Inserts rows into a table in the database.
+    :param table_name: The name of the table to insert the row into.
+    :param values_list: A list of dicts of values to insert into the table.
+    :return: list of new row's ids
+    """
+
+    query = "INSERT INTO %s (%s) VALUES (%s)" % (
+        table_name,
+        ",".join(values_list[0].keys()),
+        ",".join("%s" for _ in values_list[0].values())
+    )
+    return connect_to_db(query, list([list(value.values()) for value in values_list]))
+
+
+@HandleException
 def insert_to_network(network):
     """
     A function that insert network to the db
@@ -10,6 +46,7 @@ def insert_to_network(network):
     return insert_row_to_db('Network', network)
 
 
+@HandleException
 def insert_to_clients(client):
     """
     A function that insert client to the db
@@ -19,6 +56,7 @@ def insert_to_clients(client):
     return insert_row_to_db('Clients', client)
 
 
+@HandleException
 def insert_to_technician(technician):
     """
     A function that insert technician to the db
@@ -29,6 +67,7 @@ def insert_to_technician(technician):
     return insert_row_to_db('Technicians', technician)
 
 
+@HandleException
 def insert_to_device(devices_list):
     """
     A function that insert device to the db
@@ -36,9 +75,3 @@ def insert_to_device(devices_list):
     :return: device's id
     """
     insert_many_to_db('Device', devices_list)
-
-
-# insert_to_network({'ClientId': 1,  'Location': 'location_name' ,'Date': str(datetime.date.today())})
-# print(insert_to_clients({'Name': 'name'}))
-insert_to_device([{'Vendor': 'aaa', 'MACAddress': "mac_address", 'NetworkId': 1},
-                  {'Vendor': 'bbb', 'MACAddress': "mac_address", 'NetworkId': 1}])

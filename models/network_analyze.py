@@ -1,5 +1,6 @@
-from models import capture_reader
-
+from models import capture_reader, device_analyze
+from insert_to_db import insert_to_device, insert_to_clients
+from device_analyze import get_vendor,
 
 def capture_analyze(capture_file):
     """
@@ -27,8 +28,6 @@ def create_network(capture_file, client_id, date_taken, location_name):
     await add_devices_to_db(devices_list_to_db, network_id)
     await add_connections_to_db(connections_list_to_db)
     return network_id
-
-
 
 
 async def add_connections_to_db(connections_list):
