@@ -1,8 +1,9 @@
 from models import capture_reader, device_analyze
-from insert_to_db import insert_to_device, insert_to_network, insert_to_devices_connections
-from device_analyze import get_vendor
+from models.insert_to_db import insert_to_device, insert_to_network, insert_to_devices_connections
+from models.device_analyze import get_vendor
 from handle_exception import HandleException
-from logger_handler import log
+from models.logger_handler import log
+import models.get_from_db
 
 
 @HandleException
@@ -18,7 +19,7 @@ def capture_analyze(capture_file):
 
 @HandleException
 @log
-def create_network(capture_file, client_id, date_taken, location_name):
+async def create_network(capture_file, client_id, date_taken, location_name):
     """
     A function that creates a network from capture file and all details.
    :param capture_file: file to analyze.
@@ -55,3 +56,7 @@ async def add_connections_to_db(connections_list):
         connections.append({'SourceId': connection.get('src_mac'), 'DestinationId': connection.get('dst_mac'),
                             'Protocol': connection.get('protocol')})
     insert_to_devices_connections(connections)
+
+
+async def get_network_by_id(network_id):
+    return models.get_from_db.get_network_by_id(network_id)

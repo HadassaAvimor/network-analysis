@@ -1,6 +1,6 @@
 from handle_exception import HandleException
-from DB_connection import connect_to_db
-from logger_handler import log
+from models.DB_connection import connect_to_db
+from models.logger_handler import log
 
 
 @HandleException

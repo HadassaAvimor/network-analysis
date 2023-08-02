@@ -4,8 +4,8 @@ from scapy.layers.inet import IP, TCP, UDP
 from scapy.layers.l2 import ARP
 from scapy.layers.ntp import NTP
 from handle_exception import HandleException
-from logger_handler import log
-from capture_file_parser import get_capture_packets_from_erf, get_capture_packets_from_pcap
+from models.logger_handler import log
+from models.capture_file_parser import get_capture_packets_from_erf, get_capture_packets_from_pcap
 
 
 @HandleException

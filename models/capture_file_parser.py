@@ -1,7 +1,7 @@
 from scapy.libs.six import BytesIO
 from scapy.utils import rdpcap, ERFEthernetReader
 from handle_exception import HandleException
-from logger_handler import log
+from models.logger_handler import log
 
 
 @HandleException

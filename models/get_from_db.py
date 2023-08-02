@@ -1,5 +1,5 @@
-from DB_connection import get_cursor
-from normal_data_from_db import normal_communication, normal_network_details
+from models.DB_connection import get_cursor
+from models.normal_data_from_db import normal_communication, normal_network_details
 
 cursor = get_cursor()
 
@@ -36,7 +36,7 @@ def select_by_query(query):
     return cursor.fetchall()
 
 
-def get_network_by_network_id(network_id):
+def get_network_by_id(network_id):
     query = f"""SELECT Network.Date, Network.Location, Clients.Name, Device.MACAddress, Device.Vendor,
                            Devices_connections.SourceId, Devices_connections.DestinationId
                            FROM Network

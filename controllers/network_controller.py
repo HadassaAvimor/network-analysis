@@ -1,7 +1,8 @@
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, Form, Depends
 from starlette import status
 from models import network_analyze
 from models.authn_authz import get_current_technician, authorize_technician
+
 
 networks_router = APIRouter()
 
@@ -14,8 +15,7 @@ async def get_networks(active_technician=Depends(get_current_technician)):
 
 @networks_router.get("/id/{network_id}", status_code=status.HTTP_200_OK)
 async def get_network_by_id(network_id):
-    # TODO invoke function of get network by id from db
-    pass
+    return network_analyze.get_network_by_id(network_id)
 
 
 @networks_router.post("/", status_code=status.HTTP_201_CREATED)

@@ -4,7 +4,7 @@ from handle_exception import HandleException
 import mysql.connector
 from dotenv import load_dotenv
 from mysql.connector import Error
-from logger_handler import log
+from models.logger_handler import log
 
 load_dotenv()
 

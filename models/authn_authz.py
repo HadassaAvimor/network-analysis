@@ -9,10 +9,12 @@ from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security.utils import get_authorization_scheme_param
 from pydantic import BaseModel
 from passlib.context import CryptContext
+
+from models.get_from_db import get_one_by_condition
 from models.technician import Technician
 from dotenv import load_dotenv
 from handle_exception import HandleException
-from logger_handler import log
+from models.logger_handler import log
 
 load_dotenv()
 SECRET_KEY = os.environ["SECRET_KEY"]
@@ -79,15 +81,14 @@ def get_password_hash(password):
 
 @HandleException
 @log
-# TODO: ליצור קשר עם דיבי ולא לקבל כפרמטר
 def get_technician(technician_name: str):
-    pass
+
 
 
 @HandleException
 @log
 def authenticate_technician(technician_name: str, password: str):
-    technician: Technician = Technician(**get_technician_by_name(technician_name))
+    technician: Technician = Technician(**get_technician(technician_name))
     if not technician:
         return None
     if not verify_password(password, technician.password):
