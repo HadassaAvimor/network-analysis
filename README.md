@@ -3,7 +3,7 @@
 This project is a full-stack web application that visualizes graph data. The backend is implemented in Python using FastAPI, the database is SQL, and the frontend is implemented in React. The application allows users to load graph data from external APIs, visualize the data, and interact with it.
 
 ## Getting Started
-To get started with the project, you will need to have Python, FastAPI, and React installed. You can then clone the repository and install the dependencies using the following commands:
+To get started with the project, you will need to have Python, and React installed. You can then clone the repository and install the dependencies using the following commands:
 
 pip install -r requirements.txt
 
