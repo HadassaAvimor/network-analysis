@@ -6,6 +6,7 @@ This project is a full-stack web application that visualizes graph data. The bac
 To get started with the project, you will need to have Python, FastAPI, and React installed. You can then clone the repository and install the dependencies using the following commands:
 
 pip install -r requirements.txt
+
 npm install
 
 Once you have installed the dependencies, you can start the application by running the following command:
