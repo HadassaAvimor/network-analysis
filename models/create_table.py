@@ -7,23 +7,16 @@ connection = DB_connection.db_connection
 
 def execute_query(connection, query):
     cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        connection.commit()
-        print("Query successful")
-    except Error as err:
-        print(f"Error: '{err}'")
+    cursor.execute(query)
+    connection.commit()
 
 
 def read_query(connection, query):
     cursor = connection.cursor()
     result = None
-    try:
-        cursor.execute(query)
-        result = cursor.fetchall()
-        return result
-    except Error as err:
-        print(f"Error: '{err}'")
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return result
 
 
 create_technicians_table = """

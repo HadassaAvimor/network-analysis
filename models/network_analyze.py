@@ -59,4 +59,4 @@ async def add_connections_to_db(connections_list):
 
 
 async def get_network_by_id(network_id):
-    return models.get_from_db.get_network_by_id(network_id)
+    return models.get_from_db.get_network_by_network_id(network_id)

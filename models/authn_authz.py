@@ -9,12 +9,11 @@ from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security.utils import get_authorization_scheme_param
 from pydantic import BaseModel
 from passlib.context import CryptContext
-
-from models.get_from_db import get_one_by_condition
 from models.technician import Technician
 from dotenv import load_dotenv
 from handle_exception import HandleException
 from models.logger_handler import log
+from models.get_from_db import get_technician
 
 load_dotenv()
 SECRET_KEY = os.environ["SECRET_KEY"]
@@ -38,8 +37,7 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
     @log
     @HandleException
     async def __call__(self, request: Request) -> Optional[str]:
-        authorization: str = request.cookies.get("Authorization")  # changed to accept access token from httpOnly Cookie
-
+        authorization: str = request.cookies.get("Authorization")
         scheme, param = get_authorization_scheme_param(authorization)
         if not authorization or scheme.lower() != "bearer":
             if self.auto_error:
@@ -81,14 +79,9 @@ def get_password_hash(password):
 
 @HandleException
 @log
-def get_technician(technician_name: str):
-
-
-
-@HandleException
-@log
 def authenticate_technician(technician_name: str, password: str):
-    technician: Technician = Technician(**get_technician(technician_name))
+    tech = get_technician(technician_name)
+    technician: Technician = Technician()
     if not technician:
         return None
     if not verify_password(password, technician.password):
@@ -119,15 +112,13 @@ async def get_current_technician(token: str = Depends(oauth2_cookie_scheme)):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(payload.get("sub"))
         technician_name: str = payload.get("sub")
         if technician_name is None:
             raise credentials_exception
         token_data = TokenData(technician_name=technician_name)
     except JWTError:
         raise credentials_exception
-    technician = get_technician_by_name(user_name=token_data.technician_name)
-    print(technician)
+    technician = get_technician(token_data.technician_name)
     if technician is None:
         raise credentials_exception
     return technician

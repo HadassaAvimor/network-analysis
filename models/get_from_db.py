@@ -1,7 +1,7 @@
-from DB_connection import get_cursor
-from normal_data_from_db import normal_communication, normal_network_details
+from models.DB_connection import get_cursor
+from models.normal_data_from_db import normal_communication, normal_network_details
 from handle_exception import HandleException
-from logger_handler import log
+from models.logger_handler import log
 
 cursor = get_cursor()
 
@@ -16,8 +16,8 @@ def get_all_by_table_name(table_name):
 
 @HandleException
 @log
-def get_one_by_condition(table_name, **kwargs):
-    select_query = create_query_by_filter(table_name, "SELECT *", **kwargs)
+def get_one_by_condition(table_name, *args):
+    select_query = create_query_by_filter(table_name, "SELECT *", *args)
     cursor.execute(select_query)
     return cursor.fetchone()
 
@@ -106,7 +106,23 @@ def get_communication(network_id):
 
 @HandleException
 @log
-def get_technician(**kwargs):
-    technician = normal_communication(get_one_by_condition('Technicians', **kwargs))
-    clients = normal_communication(get_many_by_condition('Technician_Permision', TechnicianId=technician.get('Id')))
-    return {**technician, **clients}
+def check_technician_authorization(technician_id, client_id):
+    query = f'''SELECT ClientId FROM 
+    Technician_Client WHERE TechnicianId = {technician_id}'''
+    data_from_db = select_by_query(query)
+    return any(int(client_id) in client for client in data_from_db)
+
+
+def get_technician(username):
+    """
+    Gets a technician by name.
+    Args:
+      username: The name of the technician to get.
+    Returns:
+      A dictionary containing the technician's information, or None if the technician is not found.
+    """
+    query = "SELECT * FROM Technicians WHERE Username = (%s)"
+    cursor.execute(query, (username,))
+    return cursor.fetchall()
+
+
