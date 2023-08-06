@@ -19,16 +19,18 @@ def capture_analyze(capture_file):
 
 @HandleException
 @log
-async def create_network(capture_file, client_id, date_taken, location_name):
+async def create_network(capture_file, client_id, location_name):
     """
     A function that creates a network from capture file and all details.
    :param capture_file: file to analyze.
    :param client_id:
-   :param date_taken:
    :param location_name: location of network
    :return: id of created network
    """
+    print('a')
     network_info, capture_time = capture_analyze(capture_file)
+    print('b')
+
     network_id = insert_to_network(
         {'ClientId': client_id, 'Location': location_name, 'Date': capture_time})
     devices_list_to_db = device_analyze.find_devices(network_info)

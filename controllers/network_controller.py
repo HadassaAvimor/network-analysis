@@ -14,14 +14,13 @@ async def get_network_by_id(network_id):
 @networks_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_network(capture_file: UploadFile = File(...),
                          client_id: str = Form(...),
-                         date_taken: str = Form(...),
                          location_name: str = Form(...), ):
-    active_technician = authorize_technician(client_id)
-    if active_technician is None:
-        return HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    network_id = network_analyze.create_network(capture_file, client_id, date_taken, location_name)
+    # active_technician = authorize_technician(client_id)
+    # if active_technician is None:
+    #     return HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         detail="Could not validate credentials",
+    #         headers={"WWW-Authenticate": "Bearer"},
+    #     )
+    network_id = await network_analyze.create_network(capture_file, client_id, location_name)
     return network_id
