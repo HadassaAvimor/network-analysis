@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, Response
 from starlette import status
 from models import network_analyze
 from models.authn_authz import get_current_technician, authorize_technician
@@ -22,5 +22,5 @@ async def create_network(capture_file: UploadFile = File(...),
     #         detail="Could not validate credentials",
     #         headers={"WWW-Authenticate": "Bearer"},
     #     )
-    network_id = await network_analyze.create_network(capture_file, client_id, location_name)
-    return network_id
+    network_id, network_visualisation = await network_analyze.create_network(capture_file, client_id, location_name)
+    return Response(content=network_visualisation.getvalue(), media_type="image/png")

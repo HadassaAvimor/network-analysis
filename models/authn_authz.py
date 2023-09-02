@@ -13,7 +13,7 @@ from models.technician import Technician
 from dotenv import load_dotenv
 from handle_exception import HandleException
 from models.logger_handler import log
-from models.get_from_db import get_technician
+# from models.get_from_db import get_technician
 
 load_dotenv()
 SECRET_KEY = os.environ["SECRET_KEY"]

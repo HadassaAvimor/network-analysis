@@ -4,6 +4,7 @@ from models.device_analyze import get_vendor
 from handle_exception import HandleException
 from models.logger_handler import log
 import models.get_from_db
+from models.visualization import visualize_network
 
 
 @HandleException
@@ -32,12 +33,14 @@ async def create_network(capture_file, client_id, location_name):
     print('b')
 
     network_id = insert_to_network(
-        {'ClientId': client_id, 'Location': location_name, 'Date': capture_time})
+         {'ClientId': client_id, 'Location': location_name, 'Date': capture_time})
     devices_list_to_db = device_analyze.find_devices(network_info)
     connections_list_to_db = device_analyze.find_devices_connections(network_info)
     await add_devices_to_db(devices_list_to_db, network_id)
     await add_connections_to_db(connections_list_to_db)
-    return network_id
+    network_visualisation = visualize_network(connections_list_to_db)
+
+    return network_id, network_visualisation
 
 
 @HandleException
@@ -47,7 +50,7 @@ async def add_devices_to_db(devices_list, network_id):
     for device in devices_list:
         vendor = await get_vendor(device)
         devices.append({'Vendor': vendor, 'MACAddress': device, 'NetworkId': network_id})
-    insert_to_device(devices)
+    # insert_to_device(devices)
 
 
 @HandleException
@@ -62,3 +65,4 @@ async def add_connections_to_db(connections_list):
 
 async def get_network_by_id(network_id):
     return models.get_from_db.get_network_by_network_id(network_id)
+    pass

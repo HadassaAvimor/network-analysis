@@ -15,10 +15,10 @@ def create_server_connection():
     connection = None
 
     connection = mysql.connector.connect(
-        host="sql6.freemysqlhosting.net",
-        user=os.environ["DB_USERNAME"],
-        password=os.environ["DB_PASSWORD"],
-        db=os.environ["DB"]
+        host="localhost",
+        user="root",
+        password="a24h68",
+        db="NA"
     )
 
     return connection
@@ -41,3 +41,6 @@ def connect_to_db(query, values_tuple):
         cursor.execute(query, values_tuple)
     db_connection.commit()
     return cursor.lastrowid
+
+
+
