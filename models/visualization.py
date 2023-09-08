@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from typing import List
 
 
-def visualize_network(lst_connections: List) -> object:
+def visualize_network(lst_connections: List, lst_devices: List) -> object:
     G = nx.MultiDiGraph()
     edge_labels = {}
     for connection in lst_connections:
@@ -28,10 +28,11 @@ def visualize_network(lst_connections: List) -> object:
         # edge_labels[(source_mac, destination_mac)] = "protocol"
 
         key = (source_mac, destination_mac)
-        # if key in edge_labels:
-        #     edge_labels[key].add(connection["Name"])
-        # else:
-        #     edge_labels[key] = {connection["Name"]}
+
+        if key in edge_labels:
+            edge_labels[key].add(connection["protocol"])
+        else:
+            edge_labels[key] = {connection["protocol"]}
 
     # Draw nodes with labels
     node_labels = nx.get_node_attributes(G, 'label')

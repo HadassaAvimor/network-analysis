@@ -28,17 +28,14 @@ async def create_network(capture_file, client_id, location_name):
    :param location_name: location of network
    :return: id of created network
    """
-    print('a')
     network_info, capture_time = capture_analyze(capture_file)
-    print('b')
-
     network_id = insert_to_network(
-         {'ClientId': client_id, 'Location': location_name, 'Date': capture_time})
+        {'ClientId': client_id, 'Location': location_name, 'Date': capture_time})
     devices_list_to_db = device_analyze.find_devices(network_info)
     connections_list_to_db = device_analyze.find_devices_connections(network_info)
     await add_devices_to_db(devices_list_to_db, network_id)
     await add_connections_to_db(connections_list_to_db)
-    network_visualisation = visualize_network(connections_list_to_db)
+    network_visualisation = visualize_network(connections_list_to_db, devices_list_to_db)
 
     return network_id, network_visualisation
 
@@ -50,7 +47,7 @@ async def add_devices_to_db(devices_list, network_id):
     for device in devices_list:
         vendor = await get_vendor(device)
         devices.append({'Vendor': vendor, 'MACAddress': device, 'NetworkId': network_id})
-    # insert_to_device(devices)
+    insert_to_device(devices)
 
 
 @HandleException
