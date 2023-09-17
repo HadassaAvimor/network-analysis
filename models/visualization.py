@@ -43,6 +43,7 @@ def visualize_network(lst_connections: List, lst_devices: List) -> object:
     nx.draw_networkx_edges(G, pos, width=2.0, alpha=0.7)
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, label_pos=0.5, font_size=8)
     plt.axis('off')
+    plt.show()
     # Save the plot to a BytesIO buffer
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
