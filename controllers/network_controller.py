@@ -1,7 +1,6 @@
-from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, Response
+from fastapi import APIRouter, UploadFile, File, Form, Response
 from starlette import status
-from models import network_analyze
-from models.authn_authz import get_current_technician, authorize_technician
+from network_analyze import network_analyze
 
 networks_router = APIRouter()
 
